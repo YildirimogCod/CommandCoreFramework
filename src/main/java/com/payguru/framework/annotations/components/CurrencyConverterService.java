@@ -1,12 +1,16 @@
 package com.payguru.framework.annotations.components;
 
+import com.payguru.framework.annotations.Autowired;
 import com.payguru.framework.annotations.Component;
 
 @Component
 public class CurrencyConverterService {
-    private final double rate = 40;
+    @Autowired
+    private ExchangeRateProviderService rateProvider;
+
 
     public double convertToTurkishLira(double dolarAmount) {
-        return dolarAmount * this.rate;
+        double currentRate = rateProvider.getCurrentRate();
+        return dolarAmount * currentRate;
     }
 }

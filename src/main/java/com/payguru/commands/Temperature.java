@@ -12,9 +12,8 @@ public class Temperature {
     @Value("30")
     public double temperature;
 
-    @Execute("temperature")
-    public void execute() {
-        double kelvin = ctk.celsiusToKelvinService(this.temperature);
-        System.out.println(this.temperature + "°C " + " = " + kelvin + "K" );
+    @Execute("/temperature")
+    public String execute() {
+        return this.temperature + "";
     }
 }

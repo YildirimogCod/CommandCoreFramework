@@ -10,16 +10,10 @@ public class Exchange {
     private CurrencyConverterService service;
 
     @Value("45")
-    public int amount;
+    public int rate;
 
-    @Execute("exchange")
-    public void execute() {
-        // Artık hesaplama işini kendisi yapmıyor, uzmana (servise) yaptırıyor.
-        if (service == null) {
-            System.err.println("HATA: CurrencyConverterService enjekte edilemedi!");
-            return;
-        }
-        double tlResult = service.convertToTurkishLira(this.amount);
-        System.out.println(this.amount + "$ = " + tlResult + "₺");
+    @Execute("/exchange")
+    public String execute() {
+        return rate + "";
     }
 }
