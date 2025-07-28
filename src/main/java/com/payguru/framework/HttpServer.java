@@ -1,24 +1,17 @@
 package com.payguru.framework;
 
-import com.payguru.framework.annotations.Autowired;
-import com.payguru.framework.annotations.Component;
-import com.payguru.framework.annotations.Execute;
-import com.payguru.framework.annotations.Value;
+import com.payguru.framework.annotations.*;
 
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.io.PrintStream;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class Server {
+public class HttpServer {
     public void start() throws Exception {
         init();
     }
@@ -26,12 +19,13 @@ public class Server {
     public void init() throws Exception {
         System.out.println("Framework başlatılıyor, komutlar taranıyor...");
 
-        var classScanner = new ClassScanner("com.payguru"); // Tarayacağımız paket
+        var classScanner = new ClassScanner("com.payguru.app"); // Tarayacağımız paket
         var allScannedClasses = classScanner.findAllClasses();
 
         Map<Class<?>, Object> componentRegistry = new HashMap<>();
         for (Class<?> scannedClass : allScannedClasses) {
             if (scannedClass.isAnnotationPresent(Component.class)) {
+                System.out.println(scannedClass);
                 Object componentInstance = scannedClass.getConstructor().newInstance();
                 componentRegistry.put(scannedClass, componentInstance);
                 System.out.println("Component bulundu ve yaratıldı: " + scannedClass.getSimpleName());
@@ -49,25 +43,46 @@ public class Server {
             }
         }
 
-        Map<String, CommandAction> commandMap = new HashMap<>();
+        Map<String, HandlerInfo> getHandlerMap = new HashMap<>();
         for (Class<?> scannedClass : allScannedClasses) {
             for (Method method : scannedClass.getDeclaredMethods()) {
-                if (method.isAnnotationPresent(Execute.class)) {
-                    Execute executeAnnotation = method.getAnnotation(Execute.class);
-                    String commandKey = executeAnnotation.value();
+                if (method.isAnnotationPresent(GetMapping.class)) {
+                    GetMapping getMappingAnnotation = method.getAnnotation(GetMapping.class);
+                    String commandKey = getMappingAnnotation.value();
                     List<Field> requiredFields = new ArrayList<>();
                     for (Field field : scannedClass.getDeclaredFields()) {
                         if (field.isAnnotationPresent(Value.class) || field.isAnnotationPresent(Autowired.class)) {
                             requiredFields.add(field);
                         }
                     }
-                    CommandAction action = new CommandAction(scannedClass, method, requiredFields);
-                    commandMap.put(commandKey, action);
+                    HandlerInfo action = new HandlerInfo(scannedClass, method, requiredFields);
+                    getHandlerMap.put(commandKey, action);
                 }
             }
         }
 
-        System.out.println("Framework hazır! Kullanılabilir komutlar: " + commandMap.keySet());
+        System.out.println("Framework hazır! Kullanılabilir GET yolları: " + getHandlerMap.keySet());
+
+        Map<String, HandlerInfo> postHandlerMap = new HashMap<>();
+        for (Class<?> scannedClass : allScannedClasses) {
+            for (Method method : scannedClass.getDeclaredMethods()) {
+                if (method.isAnnotationPresent(PostMapping.class)) {
+                    PostMapping postMappingAnnotation = method.getAnnotation(PostMapping.class);
+                    String handlerPath = postMappingAnnotation.value();
+                    List<Field> requiredFields = new ArrayList<>();
+                    for (Field field : scannedClass.getDeclaredFields()) {
+                        if (field.isAnnotationPresent(Value.class) || field.isAnnotationPresent(Autowired.class)) {
+                            requiredFields.add(field);
+                        }
+                    }
+
+                    HandlerInfo action = new HandlerInfo(scannedClass, method, requiredFields);
+                    postHandlerMap.put(handlerPath, action);
+                }
+            }
+        }
+
+        System.out.println("Framework hazır! Kullanılabilir POST yolları: " + postHandlerMap.keySet());
 
         //
         //repl.start();
@@ -77,7 +92,7 @@ public class Server {
         while(true) {
             Socket clientSocket = serverSocket.accept();
 
-            var repl = new Repl(clientSocket, commandMap, componentRegistry);
+            var repl = new HttpHandler(clientSocket, getHandlerMap, postHandlerMap, componentRegistry);
             repl.start();
         }
     }

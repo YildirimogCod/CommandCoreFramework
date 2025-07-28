@@ -1,0 +1,78 @@
+GET http://localhost:80/hello?name=muzo
+User-Agent: IntelliJ HTTP Client/IntelliJ IDEA 2024.2.5
+Accept-Encoding: br, deflate, gzip, x-gzip
+Accept: */*
+content-length: 14
+
+merhaba dünya
+
+<> 2025-07-28T155058.200.txt
+
+###
+
+GET http://localhost:80/hello?name=muzo
+User-Agent: IntelliJ HTTP Client/IntelliJ IDEA 2024.2.5
+Accept-Encoding: br, deflate, gzip, x-gzip
+Accept: */*
+content-length: 14
+
+merhaba dünya
+
+<> 2025-07-28T155043.200.txt
+
+###
+
+GET http://localhost:80/hello?name=muzo
+User-Agent: IntelliJ HTTP Client/IntelliJ IDEA 2024.2.5
+Accept-Encoding: br, deflate, gzip, x-gzip
+Accept: */*
+content-length: 14
+
+merhaba dünya
+
+<> 2025-07-28T153946.200.txt
+
+###
+
+POST http://localhost:80/hello?name=muzo
+Content-Length: 14
+User-Agent: IntelliJ HTTP Client/IntelliJ IDEA 2024.2.5
+Accept-Encoding: br, deflate, gzip, x-gzip
+Accept: */*
+
+merhaba dünya
+
+<> 2025-07-28T153938.200.txt
+
+###
+
+POST http://localhost:80/hello?name=muzo
+Accept: application/json
+User-Agent: IntelliJ HTTP Client/IntelliJ IDEA 2024.2.5
+Accept-Encoding: br, deflate, gzip, x-gzip
+content-length: 0
+
+<> 2025-07-28T153818.200.txt
+
+###
+
+POST http://localhost:80/hello?name=muzo
+Accept: application/json
+User-Agent: IntelliJ HTTP Client/IntelliJ IDEA 2024.2.5
+Accept-Encoding: br, deflate, gzip, x-gzip
+content-length: 0
+
+<> 2025-07-28T153746.200.txt
+
+###
+
+GET http://localhost:80/hello?name=muzo
+Accept: application/json
+User-Agent: IntelliJ HTTP Client/IntelliJ IDEA 2024.2.5
+Accept-Encoding: br, deflate, gzip, x-gzip
+content-length: 0
+
+<> 2025-07-28T153739.200.txt
+
+###
+
